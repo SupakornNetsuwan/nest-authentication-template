@@ -1,10 +1,18 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { UsersController } from '../controllers/users.controller';
 import { UsersService } from '../services/users.service';
+import { LogMiddleware } from 'core/middlewares/log.middleware';
 
 @Module({
-    controllers: [UsersController],
+    imports: [],
     providers: [UsersService],
-    exports: [UsersService] // Exports users's service module to use at other modules
+    controllers: [UsersController],
+    exports: [], // Exports users's service module to use at other modules
 })
-export class UsersModule { }
+export class UsersModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(LogMiddleware)
+            .forRoutes({ path: "/api/users/*", method: RequestMethod.ALL })
+    }
+}
