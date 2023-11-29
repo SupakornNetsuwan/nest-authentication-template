@@ -4,17 +4,22 @@ import { UsersService } from '../services/users.service';
 import { ZodValidationPipe } from "core/pipes/ZodValidation.pipe";
 import { CreateUsersSchemaDto } from '../schemas/createUsersSchema';
 import { createUsersSchema } from '../schemas/createUsersSchema';
+import { MiddlewareData } from 'core/decorators/middlewareData.decorator';
+import { AuthenticationService } from 'core/services/authentication.service';
 
 @Controller('/api/users')
 export class UsersController {
 
-    constructor(private usersService: UsersService) { }
+    constructor(private usersService: UsersService, private authenticationService: AuthenticationService) { }
 
     @Get()
     public async getUsers(@Req() req: Request, @Res() res: Response) {
-
         const allUsers = await this.usersService.findAllUsers()
+        const userId = this.authenticationService.getUserId()
+        console.log(userId)
+
         return res.send({ message: "All users successfully retrieved", data: allUsers })
+
     }
 
     @Get(":id")
@@ -24,6 +29,7 @@ export class UsersController {
         if (!user) throw new NotFoundException(`User id ${id} not found`)
 
         return res.send({ message: "User found", data: user })
+
     }
 
     @Post()
@@ -42,5 +48,6 @@ export class UsersController {
 
         if (result === false) throw new HttpException("Error creating user", HttpStatus.INTERNAL_SERVER_ERROR)
         return res.send({ message: "User created successfully", data: result })
+
     }
 }

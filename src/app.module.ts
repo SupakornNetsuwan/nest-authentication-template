@@ -4,8 +4,8 @@ import { UsersModule } from './users/modules/users.module';
 import { BooksModule } from './books/modules/books.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), UsersModule, BooksModule],
+  imports: [ConfigModule.forRoot(), UsersModule, BooksModule], // Import all others modules into the main module
   controllers: [],
-  providers: [],
+
 })
 export class AppModule { }
