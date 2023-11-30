@@ -30,6 +30,7 @@ export class UsersController {
     @UseGuards(AuthenticationGuard)
     public async getUser(@Req() req: Request, @Res() res: Response, @Param("id", ParseIntPipe) id: number) {
 
+        console.log(process.env.x)
         const user = await this.usersService.findById(id);
         if (!user) throw new NotFoundException(`User id ${id} not found`)
 
