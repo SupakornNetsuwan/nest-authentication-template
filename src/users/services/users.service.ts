@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { UserType } from '../types';
+import type { UserType } from '../../../core/types';
 import timer from 'core/utils/timer';
 
 /**

@@ -3,19 +3,18 @@ import { UsersController } from '../controllers/users.controller';
 import { UsersService } from '../services/users.service';
 import { AuthenticationMiddleware } from 'core/middlewares/authentication.middleware';
 import { AuthenticationService } from 'core/services/authentication.service';
+import { AuthenticationGuard } from 'core/guards/authentication.guard';
 
 @Module({
-    providers: [UsersService, AuthenticationService], // Services
+    providers: [UsersService, AuthenticationService, AuthenticationGuard], // Services
     controllers: [UsersController], // Main controller (HTTP controller)
     imports: [],
     exports: [], // Exports users's service module to use at other modules
 })
 export class UsersModule implements NestModule {
-
     async configure(consumer: MiddlewareConsumer) {
-
         consumer
             .apply(AuthenticationMiddleware)
-            .forRoutes({ path: "api/users", method: RequestMethod.ALL })
+            .forRoutes({ path: "*", method: RequestMethod.ALL })
     }
 }

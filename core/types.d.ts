@@ -4,3 +4,5 @@ export type UserType = {
     lastName: string;
     userName: string
 }
+
+export type RoleTypes = "ADMIN" | "USER" | "GUEST"

@@ -1,11 +1,13 @@
-import { BadRequestException, Body, UsePipes, Controller, Get, HttpException, HttpStatus, NotFoundException, Param, ParseIntPipe, Post, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, UsePipes, Controller, Get, HttpException, HttpStatus, NotFoundException, Param, ParseIntPipe, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { UsersService } from '../services/users.service';
 import { ZodValidationPipe } from "core/pipes/ZodValidation.pipe";
 import { CreateUsersSchemaDto } from '../schemas/createUsersSchema';
 import { createUsersSchema } from '../schemas/createUsersSchema';
-import { MiddlewareData } from 'core/decorators/middlewareData.decorator';
 import { AuthenticationService } from 'core/services/authentication.service';
+import { AuthenticationGuard } from 'core/guards/authentication.guard';
+import { AuthorizationGuard } from 'core/guards/authorization.guard';
+import { Roles } from 'core/decorators/roles.decorator';
 
 @Controller('/api/users')
 export class UsersController {
@@ -23,6 +25,9 @@ export class UsersController {
     }
 
     @Get(":id")
+    @Roles(["USER"])
+    @UseGuards(AuthorizationGuard)
+    @UseGuards(AuthenticationGuard)
     public async getUser(@Req() req: Request, @Res() res: Response, @Param("id", ParseIntPipe) id: number) {
 
         const user = await this.usersService.findById(id);
@@ -33,6 +38,7 @@ export class UsersController {
     }
 
     @Post()
+    @UseGuards(AuthenticationGuard)
     @UsePipes(new ZodValidationPipe(createUsersSchema))
     public async createUser(
         @Req() req: Request,
