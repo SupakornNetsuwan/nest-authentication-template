@@ -1,11 +1,24 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { UsersModule } from './users/modules/users.module';
-import { BooksModule } from './books/modules/books.module';
+
+import { AuthenticationMiddleware } from '@/core/middlewares/authentication.middleware';
+import { AuthenticationService } from '@/core/services/authentication.service';
+import { UsersController } from './users/controllers/users.controller';
+import { UsersService } from './users/services/users.service';
+import { AuthController } from './auth/controllers/auth.controller';
+import { AuthService } from './auth/services/auth.service';
+import * as cookieParser from 'cookie-parser';
 
 @Module({
-  imports: [ConfigModule.forRoot(), UsersModule, BooksModule], // Import all others modules into the main module
-  controllers: [],
-
+  controllers: [UsersController, AuthController],
+  providers: [AuthenticationService, UsersService, AuthService],
+  imports: [ConfigModule.forRoot()], // Import all others modules into the main module
+  exports: []
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthenticationMiddleware)
+      .forRoutes("*")
+  }
+}

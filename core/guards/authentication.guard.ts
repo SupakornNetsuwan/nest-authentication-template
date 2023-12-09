@@ -14,8 +14,11 @@ export class AuthenticationGuard implements CanActivate {
     const res = context.switchToHttp().getResponse()
 
     const userId = this.authenticationService.getUserId()
-    
-    if (!userId) throw new HttpException("You are not authenticated", HttpStatus.UNAUTHORIZED)
+
+    if (!userId) {
+      console.log(userId, "<- User ID not found")
+      throw new HttpException("You are not authenticated", HttpStatus.UNAUTHORIZED)
+    }
 
     return true;
   }

@@ -1,15 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
+import { UserDto } from '../data-access/users';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class AuthenticationService {
-    private userId: string | null;
+    private userId: UserDto["id"]
+    private userRole: UserDto["role"]
 
-    setUserId(userId: string | null) {
+    setUserId(userId: typeof this.userId) {
         this.userId = userId
+    }
+
+    setUserRole(userRole: typeof this.userRole) {
+        this.userRole = userRole
     }
 
     getUserId() {
         return this.userId
+    }
+
+    getUserRole() {
+        return this.userRole
     }
 
 }

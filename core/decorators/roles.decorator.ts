@@ -1,4 +1,4 @@
 import { Reflector } from "@nestjs/core";
-import { RoleTypes } from "core/types";
+import { UserDto } from "../data-access/users";
 
-export const Roles = Reflector.createDecorator<RoleTypes[]>();
+export const Roles = Reflector.createDecorator<UserDto["role"][]>();
