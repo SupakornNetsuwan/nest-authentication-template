@@ -1,25 +1,25 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { AuthenticationService } from 'core/services/authentication.service';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JWTService } from '../services/JWT.service';
+import { Request, Response } from 'express';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
 
-  constructor(private readonly authenticationService: AuthenticationService) { }
+  constructor(private readonly jwtService: JWTService) { }
 
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const req = context.switchToHttp().getRequest()
-    const res = context.switchToHttp().getResponse()
+    const req = <Request>context.switchToHttp().getRequest()
+    const res = <Response>context.switchToHttp().getResponse()
 
-    const userId = this.authenticationService.getUserId()
+    console.log("Authentication guard 🛡️")
 
-    if (!userId) {
-      console.log(userId, "<- User ID not found")
-      throw new HttpException("You are not authenticated", HttpStatus.UNAUTHORIZED)
+    if (this.jwtService.getToken) {
+      return true;
     }
 
-    return true;
+    throw new UnauthorizedException("You are not authenticated")
   }
 }

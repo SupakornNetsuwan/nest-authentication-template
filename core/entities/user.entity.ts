@@ -1,6 +1,6 @@
 import { $Enums, User as PrismaUser } from "@prisma/client";
-import { UserDto } from "../data-access/users";
-import { validatePassword as validatePasswordAction } from "../actions/user";
+import { JWTBodyDto, UserDto } from "../data-access/users";
+
 
 class UserEntity implements PrismaUser {
     id: string;
@@ -11,6 +11,7 @@ class UserEntity implements PrismaUser {
     role: $Enums.UserRole;
     createdAt: Date;
     updatedAt: Date;
+    JWT: string;
 
     constructor(user: PrismaUser) {
         this.id = user.id
@@ -31,7 +32,7 @@ class UserEntity implements PrismaUser {
             userName: this.userName,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
-            role: this.role
+            role: this.role,
         }
     }
 
@@ -72,8 +73,21 @@ class UserEntity implements PrismaUser {
         return this.role
     }
 
-    public async validatePassword(password: string = this.getPassword): Promise<boolean> {
-        return await validatePasswordAction({ password, userId: this.getId })
+    get getJWT() {
+        return this.JWT
+    }
+
+    set setJWT(JWT: string) {
+        this.JWT = JWT;
+    }
+
+
+    get getJWTBody(): JWTBodyDto {
+        return {
+            id: this.getId,
+            userName: this.userName,
+            role: this.role
+        }
     }
 }
 

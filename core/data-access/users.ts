@@ -1,7 +1,13 @@
 import { z } from "zod";
-import { User } from "@prisma/client";
+import { Prisma, User, UserRole } from "@prisma/client";
 
 export type UserDto = User
+
+export type JWTBodyDto = {
+    id: string;
+    userName: string,
+    role: UserRole;
+}
 
 export const registerUserSchema = z.object({
     firstName: z.string({ required_error: "FirstName is required" }),
@@ -12,9 +18,9 @@ export const registerUserSchema = z.object({
 
 export type RegisterUserDto = z.infer<typeof registerUserSchema>
 
-export const loginUserDto = z.object({
-    username: z.string({ required_error: "Username is requried" }),
+export const loginUserSchema = z.object({
+    userName: z.string({ required_error: "Username is requried" }),
     password: z.string({ required_error: "Password is required" })
 })
 
-export type LoginUserDto = z.infer<typeof loginUserDto>
+export type LoginUserDto = z.infer<typeof loginUserSchema>

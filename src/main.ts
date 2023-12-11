@@ -2,10 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 
-async function bootstrap() {
+const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
   app.enableCors()
-  app.use(cookieParser()) // Using global middleware
+  app // Using global middleware
+    .use(cookieParser())
   await app.listen(3000);
 }
+
 bootstrap();

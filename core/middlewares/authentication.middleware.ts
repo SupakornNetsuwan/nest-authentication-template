@@ -1,28 +1,37 @@
-import { HttpException, HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
-import { AuthenticationService } from 'core/services/authentication.service';
-import { Request, Response } from 'express';
+import { Injectable, NestMiddleware, Scope } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
+import { JwtService as NestJwtService } from '@nestjs/jwt';
+import { JWTService } from '../services/JWT.service';
+import { JWTBodyDto } from '../data-access/users';
 
 /**
- * Middleware -> Guard -> Pipe / Intereptor
+ * @description A function syle middleware
+ * @remark Middleware -> Guard -> Pipe / Intereptor
  */
+
 
 @Injectable()
 export class AuthenticationMiddleware implements NestMiddleware {
 
-  constructor(private readonly authenticationService: AuthenticationService) { }
+  constructor(private readonly nestJwtService: NestJwtService, private JwtService: JWTService) { }
 
   use(req: Request, res: Response, next: () => void) {
-    const bearerToken = req.headers.authorization
-    const token = bearerToken?.split(" ")[1] || null
 
-    if (token) {
-      this.authenticationService.setUserId("862f4bfd-8dc9-42a9-bbeb-ecd3a834f790") // What Authentication middleware does is only set userId --to--> from Authentication service
-      this.authenticationService.setUserRole("USER")
+    try {
+      const [type, token] = req.cookies.token.split(" ")
+
+      const jwtData = this.nestJwtService.verify<JWTBodyDto>(token)
+
+      this.JwtService.setData = jwtData;
+      this.JwtService.setToken = token;
+      
+      console.log("Authentication middleware 🕛")
+
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log("🔴 Can't extract the token the authentication middleware process will be ignored :", error.message)
+      }
     }
-
-    console.log("Authentication Guard 🛡️")
-
     next();
-
   }
 }

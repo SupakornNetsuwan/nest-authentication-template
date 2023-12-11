@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, UsePipes } from '@nestjs/common';
-import * as userActions from '@/core/actions/user';
 import UserEntity from '@/core/entities/user.entity';
+// Actions
+import * as userActions from '@/core/actions/user';
 
 /**
  * This part does dependency injection for "Users controller"
@@ -14,14 +15,20 @@ import UserEntity from '@/core/entities/user.entity';
 export class UsersService {
 
     public async findAllUsers() {
-        const users = await userActions.getAllUsers()
-        return users
+        const userEntities = await userActions.getAllUsers()
+
+        return userEntities
+        
     }
 
-    public async findById(id: string) {
+    public async findUser(id: string) {
         const user = await userActions.getUser(id)
+
         if(!user) throw new NotFoundException("User not found")
+
         const userEntity = new UserEntity(user)
-        return userEntity.getUser
+
+        return userEntity
+
     }
 }
