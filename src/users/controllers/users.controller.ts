@@ -21,7 +21,7 @@ export class UsersController {
     }
 
 
-    @Get("test")
+    @Get("me")
     @Roles(["USER", "ADMIN"])
     @UseGuards(AuthorizationGuard)
     @UseGuards(AuthenticationGuard)
